@@ -2,7 +2,7 @@
    CONFIG — the only part you need to edit
 ------------------------------------------------------------------- */
 const CONFIG = {
-  video: "work.MP4",          // exact file name, placed next to index.html
+  video: "work.mp4",          // exact file name, placed next to index.html
   title: "My video",          // big title above the player
   author: "",                 // e.g. "Your name · Class 3B · November 2026"
   subtitles: ""               // optional: "work.vtt" if you add a subtitle file
