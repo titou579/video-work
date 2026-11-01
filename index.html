@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Screening</title>
+  <meta name="description" content="Video presentation">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="indigo">
+  <canvas id="glow" width="48" height="27" aria-hidden="true"></canvas>
+
+  <div class="app">
+    <header class="top">
+      <div class="titles">
+        <h1 id="title">My video</h1>
+        <p id="author"></p>
+      </div>
+      <div class="top-actions">
+        <button class="chip" id="presentBtn" type="button" title="Clean view (P)">
+          <i data-icon="present"></i><span>Present</span>
+        </button>
+        <button class="chip" id="settingsBtn" type="button" title="Settings (S)" aria-expanded="false" aria-controls="panel">
+          <i data-icon="sliders"></i><span>Settings</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage-wrap">
+      <section class="stage" id="stage" aria-label="Video player">
+        <video id="video" preload="metadata" playsinline></video>
+
+        <button class="bigplay" id="bigplay" type="button" aria-label="Play video">
+          <i data-icon="play"></i>
+        </button>
+
+        <div class="error" id="error" hidden>
+          <p><strong>The video can't be loaded.</strong></p>
+          <p>Make sure the file <code id="errName">work.MP4</code> sits next to <code>index.html</code> and that the name matches exactly (capital letters count).</p>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+        <div class="controls" id="controls">
+          <input class="seek" id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+          <div class="row">
+            <button class="ico" id="playBtn" type="button" title="Play / Pause (Space)" aria-label="Play"><i data-icon="play"></i></button>
+            <button class="ico" id="backBtn" type="button" title="Back 10 s (J)" aria-label="Back 10 seconds"><i data-icon="back"></i></button>
+            <button class="ico" id="fwdBtn" type="button" title="Forward 10 s (L)" aria-label="Forward 10 seconds"><i data-icon="fwd"></i></button>
+            <span class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></span>
+
+            <span class="spacer"></span>
+
+            <div class="vol">
+              <button class="ico" id="muteBtn" type="button" title="Mute (M)" aria-label="Mute"><i data-icon="vol"></i></button>
+              <input id="volume" type="range" min="0" max="1" step="0.02" value="1" aria-label="Volume">
+            </div>
+            <button class="ico" id="ccBtn" type="button" title="Subtitles (C)" aria-label="Subtitles" disabled><i data-icon="cc"></i></button>
+            <button class="ico" id="pipBtn" type="button" title="Picture in picture" aria-label="Picture in picture"><i data-icon="pip"></i></button>
+            <button class="ico" id="fsBtn" type="button" title="Fullscreen (F)" aria-label="Fullscreen"><i data-icon="full"></i></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="panel" id="panel" aria-label="Settings" hidden>
+      <div class="panel-head">
+        <h2>Settings</h2>
+        <button class="ico" id="closePanel" type="button" aria-label="Close settings"><i data-icon="close"></i></button>
+      </div>
+
+      <div class="group">
+        <h3>Presentation</h3>
+        <label class="field">Title
+          <input type="text" id="titleInput" maxlength="80">
+        </label>
+        <label class="field">Name / class
+          <input type="text" id="authorInput" maxlength="80" placeholder="Your name, class, date">
+        </label>
+      </div>
+
+      <div class="group">
+        <h3>Playback</h3>
+        <label class="field">Speed
+          <select id="speed">
+            <option value="0.5">0.5×</option>
+            <option value="0.75">0.75×</option>
+            <option value="1" selected>Normal</option>
+            <option value="1.25">1.25×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+        <label class="switch"><input type="checkbox" id="loop"><span>Loop</span></label>
+        <label class="switch"><input type="checkbox" id="autohide" checked><span>Auto-hide controls</span></label>
+      </div>
+
+      <div class="group">
+        <h3>Look</h3>
+        <div class="field">Theme
+          <div class="swatches" id="swatches" role="radiogroup" aria-label="Theme">
+            <button type="button" role="radio" data-theme="indigo" aria-label="Indigo"></button>
+            <button type="button" role="radio" data-theme="ember" aria-label="Ember"></button>
+            <button type="button" role="radio" data-theme="forest" aria-label="Forest"></button>
+            <button type="button" role="radio" data-theme="paper" aria-label="Paper"></button>
+          </div>
+        </div>
+        <label class="field">Video fit
+          <select id="fit">
+            <option value="contain" selected>Show everything</option>
+            <option value="cover">Fill the frame</option>
+          </select>
+        </label>
+        <label class="switch"><input type="checkbox" id="glowToggle" checked><span>Ambient glow</span></label>
+      </div>
+
+      <div class="group">
+        <h3>Subtitles</h3>
+        <label class="file">
+          <input type="file" id="subFile" accept=".vtt,.srt,text/vtt">
+          <span>Load a .vtt or .srt file</span>
+        </label>
+        <label class="field">Size
+          <select id="subSize">
+            <option value="70%">Small</option>
+            <option value="100%" selected>Medium</option>
+            <option value="140%">Large</option>
+            <option value="180%">Extra large</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="group">
+        <h3>Keyboard</h3>
+        <dl class="keys">
+          <dt>Space / K</dt><dd>Play, pause</dd>
+          <dt>← →</dt><dd>5 seconds</dd>
+          <dt>J / L</dt><dd>10 seconds</dd>
+          <dt>↑ ↓</dt><dd>Volume</dd>
+          <dt>M</dt><dd>Mute</dd>
+          <dt>C</dt><dd>Subtitles</dd>
+          <dt>F</dt><dd>Fullscreen</dd>
+          <dt>P</dt><dd>Clean view</dd>
+          <dt>R</dt><dd>Restart</dd>
+          <dt>0 – 9</dt><dd>Jump to 0 – 90 %</dd>
+        </dl>
+      </div>
+
+      <button class="reset" id="reset" type="button">Reset settings</button>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
